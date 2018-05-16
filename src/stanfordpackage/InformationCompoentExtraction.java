@@ -38,7 +38,6 @@ public class InformationCompoentExtraction {
 			       int e=0;
 			       // folder containing sentence corpus
 			       File folder = new File("C:\\Users\\ASLAM\\corpus\\");
-			     
 			       
 					File[] listOfFiles = folder.listFiles();
 					System.out.println(listOfFiles.length);
@@ -50,29 +49,23 @@ public class InformationCompoentExtraction {
 						System.out.println(name);
 						
 				
-			    BufferedReader br=new BufferedReader(fr);	
-			    // File path where to write the triplet in the texr file
-			    FileWriter filewriter=new FileWriter("C:\\Users\\ASLAM\\Desktop\\Triplets.txt", true);
-			     
+			    BufferedReader br=new BufferedReader(fr);
+			    FileWriter filewriter=new FileWriter("C:\\Users\\ASLAM\\Desktop\\ICsTriplets.txt", true);// Output file path for text file to write Triplets
 			    PrintWriter pw=new PrintWriter(filewriter);
 			    			    
 				String text; String line;  String sno=null;
 				while((line=br.readLine())!=null){
-						if(line.contains("PMID:")) sno=line;
-							
+													
 				if((line.length()!=0)&&(!(line.contains("_PMID:")))){
-					 text=line.replaceAll("^\\[|\\]$","").trim().replaceAll("^Abstract:|Title:", "");
-					
-					 //text="Diabetes causes heart related problems".
-					  String textsplit[]=text.split("(?<=[.])\\s+(?=[^a-z])");
+													
+					  String textsplit[]=line.split("(?<=[.])\\s+(?=[^a-zA-Z])"); // split text into sentences
 					  
 					  System.out.println(textsplit.length);
 					  e++;
 				   for(int x=0;x<textsplit.length; x++){
 						  text=textsplit[x].trim().replaceAll("^Abstract:|Title:", "").replaceAll("^\\[|\\]$","");							
 						  System.out.println("Sentence: "+x+":  "+text);
-					  
-					     
+						  
 					      pw.println("Sentence:");
 					      pw.println(text);
 					   
@@ -84,8 +77,7 @@ public class InformationCompoentExtraction {
 			      System.out.println(tree.labeledYield());				    
 			      GrammaticalStructure gs = gsf.newGrammaticalStructure(tree);
 			      Collection tdl=gs.typedDependenciesCCprocessed();
-				 // Main.writeImage(tree, tdl,"image.png");
-				//Collection<TypedDependency> td = gs.typedDependenciesCollapsed();
+				
 				
 				System.out.println(tdl);
 				
@@ -187,11 +179,9 @@ public class InformationCompoentExtraction {
 			    	   if(str2.contains("_")){
 			    		   str3=str2.substring(str2.indexOf("_")+1);
 			    		   str2=str2.substring(0,str2.indexOf("_"));
-			    		   //System.out.println("i="+i+" "+str1+" "+str2+" "+str3);
+			    		   
 			    	   }
-			    	   
-			    	   
-			    	  // else System.out.println("i="+i+" "+str1+" "+str2);
+			    	   			    	   			    	  
 			    	  System.out.println(sword+" "+swordTag+" "+swordIndex);
 			    	   for(int j=0; j<list2.length; j++){   
 			    		   rtd= (ElementAccessClass) list2[j];
@@ -234,7 +224,7 @@ public class InformationCompoentExtraction {
 						    	    	 depNewRl.add(new  ElementAccessClass(deprl,srcn,srcntag,srcnindex,sword,swordTag,swordIndex));
 						    	     }else{
 						    	    	 depNewRl.add(rtd);
-						    	    	 
+						    	    	 //depNewRl.add(new ElementAccessClass(deprl,srcn,srcntag,srcnindex,destn,destntag,destindex));
 						    	     }
 			  				  }
 					    	    	  				 
@@ -287,9 +277,9 @@ public class InformationCompoentExtraction {
 				             			 if(aj.depType.equalsIgnoreCase("cop")&&aj.firstWord.equals(ai.firstWord)&&aj.firstTag.equals(ai.firstTag)&&aj.secondTag.contains("VB"))
 				             			   { 
 				             				 // Rule 1
-				             				  pw.println(ai.secondWord+" || "+aj.secondWord+" || "+aj.firstWord+ "		-----From Rule 1: ");
-				             				  System.out.println(ai.secondWord+" || "+aj.secondWord+" || "+aj.firstWord+ "		-----From Rule 1: ");
-				             				   
+				             				 boolean r1_1=false,r1_2=false,r1_3=false,r1_2_1=false,r1_2_2=false;
+				             				 
+				             				  boolean r1=true;
 				             				 ElementAccessClass ak;      
 						             		 for(int k=0; k<myobj.length; k++){
 						             			 ak=(ElementAccessClass) myobj[k];
@@ -299,13 +289,14 @@ public class InformationCompoentExtraction {
 						             				 //Rule 1.1
 						             				 pw.println(ai.secondWord+" and "+ak.secondWord+ " || "+aj.secondWord+" || "+aj.firstWord+ "		-----From Rule 1.1 ");
 						             				 System.out.println(ai.secondWord +" and "+ak.secondWord+ " || "+aj.secondWord+" || "+aj.firstWord+ "		-----From Rule 1.1 ");
+						             				r1_1=true;
 						             			  }
-						             			if(ak.depType.equalsIgnoreCase("nmod:")&&ak.firstWord.equals(ai.secondWord)&&ak.firstTag.equals(ai.secondTag)&&ak.secondTag.contains("NN"))
+						             			if(ak.depType.contains("nmod:")&&ak.firstWord.equals(ai.secondWord)&&ak.firstTag.equals(ai.secondTag)&&ak.secondTag.contains("NN"))
 						             			   {
 						             				 //Rule 1.2
 						             				String xx=ak.depType.substring(ak.depType.indexOf(":")+1);
-						             				 pw.println(ai.secondWord+" "+xx+" "+ak.secondWord+ " || "+aj.secondWord+" || "+aj.firstWord+ "		-----From Rule 1.2 ");
-						             				 System.out.println(ai.secondWord +" "+xx+" "+ak.secondWord+ " || "+aj.secondWord+" || "+aj.firstWord+ "		-----From Rule 1.2 ");
+						             				
+						             				 r1_2=true;
 						             				 ElementAccessClass al;      
 								             		 for(int l=0; l<myobj.length; l++){
 								             			 al=(ElementAccessClass) myobj[l];
@@ -315,14 +306,22 @@ public class InformationCompoentExtraction {
 								             				 // Rule 1.2.1
 								             				 pw.println(ai.secondWord+" "+xx+" "+ak.secondWord+ " || "+aj.secondWord+" || "+al.secondWord+ "		-----From Rule 1.2.1 ");
 								             				 System.out.println(ai.secondWord +" "+xx+" "+ak.secondWord+ " || "+aj.secondWord+" || "+al.secondWord+ "		-----From Rule 1.2.1 ");
+								             				r1_2_1=true;
 								             		      }
 								             			 if(al.depType.equalsIgnoreCase("nummod")&&al.firstWord.equals(ai.firstWord)&&al.firstTag.equals(ai.firstTag)&&al.secondTag.contains("CD"))
 								             			   {
 								             				 // Rule 1.2.2
 								             				 pw.println(ai.secondWord+" "+xx+" "+ak.secondWord+ " || "+aj.secondWord+" || "+al.secondWord+" "+ai.firstWord +"		-----From Rule 1.2.2 ");
 								             				 System.out.println(ai.secondWord +" "+xx+" "+ak.secondWord+ " || "+aj.secondWord+" || "+al.secondWord+ " "+ai.firstWord +"		-----From Rule 1.2.2 ");
+								             				r1_2_2=true;
 								             		      }
+								             			
 								                     } //end for loop l
+								             		// if(r1_2_1||r1_2_2) r1_2=false;
+								             		 if(r1_2){
+								             			 pw.println(ai.secondWord+" "+xx+" "+ak.secondWord+ " || "+aj.secondWord+" || "+aj.firstWord+ "		-----From Rule 1.2 ");
+								             			 System.out.println(ai.secondWord +" "+xx+" "+ak.secondWord+ " || "+aj.secondWord+" || "+aj.firstWord+ "		-----From Rule 1.2 ");
+								             		 }
 						             			 }
 						             			
 						             			if(ak.depType.equalsIgnoreCase("neg")&&ak.firstWord.equals(ai.firstWord)&&ak.firstTag.equals(ai.firstTag)&&ak.secondTag.contains("RB"))
@@ -330,9 +329,14 @@ public class InformationCompoentExtraction {
 						             				 //Rule 1.3
 						             				 pw.println(ai.secondWord+" || "+aj.secondWord+" "+ak.secondWord+" || "+ai.firstWord+ "		-----From Rule 1.3 ");
 						             				 System.out.println(ai.secondWord +" || "+aj.secondWord+" "+ak.secondWord+" || "+ai.firstWord+ "		-----From Rule 1.3 ");
+						             				 r1_3=true;
 						             			  }
-						             		 } // end for loop k
-				             				          				   
+						             		 } // end for loop k				             				
+						             		 if(r1_1||r1_2||r1_3||r1_2_1||r1_2_2) r1=false;
+						             		 if(r1){
+						             			 pw.println(ai.secondWord+" || "+aj.secondWord+" || "+aj.firstWord+ "		-----From Rule 1: ");
+					             				  System.out.println(ai.secondWord+" || "+aj.secondWord+" || "+aj.firstWord+ "		-----From Rule 1: ");
+						             		    }
 				             				}
 				             			 
 				             			 
@@ -350,7 +354,7 @@ public class InformationCompoentExtraction {
 				             			 if(aj.depType.equalsIgnoreCase("acl")&&aj.firstWord.equals(ai.firstWord)&&aj.firstTag.equals(ai.firstTag)&&aj.secondTag.contains("VB"))
 				             			   { 
 				             				 // Rule 2
-				             				
+				             				 boolean  r2_1=false, r2_1_1=false, r2_1_1_1=false, r2_3=false, r2_2=false, r2_2_1=false, r2_2_2=false, r2_2_2_1=false;
 				             				 ElementAccessClass ak;      
 						             		 for(int k=0; k<myobj.length; k++){
 						             			 ak=(ElementAccessClass) myobj[k];
@@ -358,9 +362,8 @@ public class InformationCompoentExtraction {
 						             			 if(ak.depType.equalsIgnoreCase("dobj")&&ak.firstWord.equals(aj.secondWord)&&ak.firstTag.equals(aj.secondTag)&&ak.secondTag.contains("NN"))
 						             			   { 
 						             				 //Rule 2.1
-						             				 pw.println(ai.secondWord+ " || "+aj.secondWord+" || "+ak.secondWord+ "		-----From Rule 2.1 ");
-						             				 System.out.println(ai.secondWord +" || "+aj.secondWord+" || "+ak.secondWord+ "		-----From Rule 2.1 ");
-						             				 
+						             				
+						             				 r2_1=true;
 						             				 ElementAccessClass al;      
 								             		 for(int l=0; l<myobj.length; l++){
 								             			 al=(ElementAccessClass) myobj[l];
@@ -369,9 +372,8 @@ public class InformationCompoentExtraction {
 								             			   {
 								             				 // Rule 2.1.1
 								             				 String xx=al.depType.substring(al.depType.indexOf(":")+1);       				
-								             				 pw.println(ai.secondWord+" "+xx+" "+al.secondWord+ " || "+aj.secondWord+" || "+ak.secondWord+ "		-----From Rule 2.1.1 ");
-								             				 System.out.println(ai.secondWord +" "+xx+" "+al.secondWord+ " || "+aj.secondWord+" || "+ak.secondWord+ "		-----From Rule 2.1.1 ");
-								             				 
+								             				
+								             				r2_1_1=true;
 								             				ElementAccessClass am;      
 										             		 for(int m=0; m<myobj.length; m++){
 										             			 am=(ElementAccessClass) myobj[m];
@@ -381,11 +383,26 @@ public class InformationCompoentExtraction {
 										             				 // Rule 2.1.1.1										             				 
 										             				 pw.println(ai.secondWord+" "+xx+" "+al.secondWord+ " || "+aj.firstWord+" "+am.secondWord+" "+aj.secondWord+" || "+ak.secondWord+ "		-----From Rule 2.1.1.1 ");
 										             				 System.out.println(ai.secondWord +" "+xx+" "+al.secondWord+ " || "+aj.firstWord+" "+am.secondWord+" "+aj.secondWord+" || "+ak.secondWord+ "		-----From Rule 2.1.1.1 ");
-										             				 
+										             				r2_1_1_1=true;
+										             				
 										             			   }
 										             		 } // end for loop m
+										             		 
+										             		 if(r2_1_1_1)r2_1_1=r2_1=false;
+										             		 if(r2_1_1){
+										             			 pw.println(ai.secondWord+" "+xx+" "+al.secondWord+ " || "+aj.secondWord+" || "+ak.secondWord+ "		-----From Rule 2.1.1 ");
+									             				 System.out.println(ai.secondWord +" "+xx+" "+al.secondWord+ " || "+aj.secondWord+" || "+ak.secondWord+ "		-----From Rule 2.1.1 ");
+									             				r2_1=false;
+										             		 }
+										             		       		 
 								             		      }
+								             			 
 								             		 }// end for loop l
+								             		if(r2_1){
+								             			 pw.println(ai.secondWord+ " || "+aj.secondWord+" || "+ak.secondWord+ "		-----From Rule 2.1 ");
+							             				 System.out.println(ai.secondWord +" || "+aj.secondWord+" || "+ak.secondWord+ "		-----From Rule 2.1 ");
+								             		} 
+								             		 
 						             			   }
 						             			// ****		             		
 						             			// 2.2
@@ -394,9 +411,8 @@ public class InformationCompoentExtraction {
 						             				
 						             				 //Rule 2.2
 						             				 String xx=ak.depType.substring(ak.depType.indexOf(":")+1);
-						             				 pw.println(ai.secondWord+ " || "+aj.secondWord+" "+xx+" || "+ak.secondWord+ "		-----From Rule 2.2 ");
-						             				 System.out.println(ai.secondWord +" || "+aj.secondWord+" "+xx+" || "+ak.secondWord+ "		-----From Rule 2.2 ");
 						             				 
+						             				r2_2=true;
 						             				 ElementAccessClass al;      
 								             		 for(int l=0; l<myobj.length; l++){
 								             			 al=(ElementAccessClass) myobj[l];
@@ -407,15 +423,14 @@ public class InformationCompoentExtraction {
 								             				 String yy=al.depType.substring(al.depType.indexOf(":")+1);
 								             				 pw.println(ai.secondWord+" "+yy+" "+al.secondWord+ " || "+aj.secondWord+" "+xx+" || "+ak.secondWord+ "		-----From Rule 2.2.1 ");
 								             				 System.out.println(ai.secondWord +" "+yy+" "+al.secondWord+ " || "+aj.secondWord+" "+xx+" || "+ak.secondWord+ "		-----From Rule 2.2.1 ");
-
+								             				r2_2_1=true;
 								             			   }
 								             			if(al.depType.contains("nmod:")&&al.firstWord.equals(ak.secondWord)&&al.firstTag.equals(ak.secondTag)&&al.secondTag.contains("NN"))
 								             			   {
 								             				 // Rule 2.2.2
 								             				 String yy=al.depType.substring(al.depType.indexOf(":")+1);
-								             				 pw.println(ai.secondWord+" || "+aj.secondWord+" "+xx+" || "+ak.secondWord+" "+yy+" "+ al.secondWord+"		-----From Rule 2.2.2 ");
-								             				 System.out.println(ai.secondWord +" || "+aj.secondWord+" "+xx+" || "+ak.secondWord+" "+yy+" "+ al.secondWord+"		-----From Rule 2.2.2 ");
-								             				 
+								             				
+								             				 r2_2_2=true;
 								             				 ElementAccessClass am;      
 										             		 for(int m=0; m<myobj.length; m++){
 										             			 am=(ElementAccessClass) myobj[m];
@@ -427,16 +442,26 @@ public class InformationCompoentExtraction {
 										             				String z=am.depType.substring(am.depType.indexOf(":")+1);
 										             				 pw.println(ai.secondWord+" || "+aj.secondWord+" "+xx+" || "+al.secondWord+" "+z+" "+ am.secondWord+"		-----From Rule 2.2.2 ");
 										             				 System.out.println(ai.secondWord +" || "+aj.secondWord+" "+xx+" || "+al.secondWord+" "+z+" "+ am.secondWord+"		-----From Rule 2.2.2 ");
-									
-										             				 
+										             				r2_2_2_1=true;				             				 
 										             				 
 										             			   }
+										             			 
 										             		 }
-
+										             		 if(r2_2_2_1) r2_2_2=false;
+										             		 if(r2_2_2){
+										             			 pw.println(ai.secondWord+" || "+aj.secondWord+" "+xx+" || "+ak.secondWord+" "+yy+" "+ al.secondWord+"		-----From Rule 2.2.2 ");
+									             				 System.out.println(ai.secondWord +" || "+aj.secondWord+" "+xx+" || "+ak.secondWord+" "+yy+" "+ al.secondWord+"		-----From Rule 2.2.2 ");
+									             				 
+										             		 }
+										             		 
 								             			   }
 								             		 } //end for loop l
- 
-						             				 
+                                                     if(r2_2_1||r2_2_2||r2_2_2_1) r2_2=false;
+                                                     if(r2_2){
+                                                    	 pw.println(ai.secondWord+ " || "+aj.secondWord+" "+xx+" || "+ak.secondWord+ "		-----From Rule 2.2 ");
+    						             				 System.out.println(ai.secondWord +" || "+aj.secondWord+" "+xx+" || "+ak.secondWord+ "		-----From Rule 2.2 ");
+                                                     }
+						             			 
 						             			   }						             			
 						             			if(ak.depType.contains("nmod:")&&ak.firstWord.equals(aj.secondWord)&&ak.firstTag.equals(aj.secondTag)&&ak.secondTag.contains("VB"))
 						             			   { 
@@ -478,16 +503,17 @@ public class InformationCompoentExtraction {
 				     					aj=(ElementAccessClass) myobj[j]; 
 				     					if(aj.depType.contains("dobj")&&aj.firstWord.equals(ai.firstWord)&&aj.firstTag.equals(ai.firstTag)&&aj.secondTag.contains("NN")&&(aj.firstIndex==ai.firstIndex)&&(!(aj.secondWord.equals("$")||aj.secondWord.equals("%")))){
 				     						//Rule 3
-				     						 pw.println(ai.secondWord+ " || "+ai.firstWord+" || "+aj.secondWord+ "		-----From Rule 3 ");
-				             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" || "+aj.secondWord+ "		-----From Rule 3 ");
+				     						boolean r3_1=false, r3_1_1=false, r3_1_2=false, r3_1_3=false, r3_2=false, r3_3=false, r3_4=false, r3_5=false;
+				     						 
+				             				boolean  r3=true;
 				             				ElementAccessClass ak;     
 						     				for(int k=0;k<myobj.length;k++){
 						     					ak=(ElementAccessClass) myobj[k]; 
 						     					if(ak.depType.contains("nmod:")&&ak.firstWord.equals(aj.secondWord)&&ak.firstTag.equals(aj.secondTag)&&ak.secondTag.contains("NN")){
 						     						// Rule 3.1 
 						     						 String xx=ak.depType.substring(ak.depType.indexOf(":")+1);
-						     						 pw.println(ai.secondWord+ " || "+ai.firstWord+" || "+ak.firstWord+" "+xx+" "+ak.secondWord+ "		-----From Rule 3.1 ");
-						             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" || "+ak.firstWord+" "+xx+" "+ak.secondWord+ "		-----From Rule 3.1 ");
+						     						
+						             				r3_1=true;
 						             				ElementAccessClass al;     //int count=0;
 								     				for(int l=0;l<myobj.length;l++){
 								     					al=(ElementAccessClass) myobj[l]; 
@@ -496,25 +522,34 @@ public class InformationCompoentExtraction {
 								     						 String y=al.depType.substring(al.depType.indexOf(":")+1);
 								     						 pw.println(ai.secondWord+" "+y+" "+al.secondWord+ " || "+ai.firstWord+" || "+ak.firstWord+" "+xx+" "+ak.secondWord+ "		-----From Rule 3.1.1 ");
 								             				 System.out.println(ai.secondWord +" "+y+" "+al.secondWord+" || "+ai.firstWord+" || "+ak.firstWord+" "+xx+" "+ak.secondWord+ "		-----From Rule 3.1.1 ");
+								             				r3_1_1=true;
 								     					}
 								     					if(al.depType.contains("nmod:")&&al.firstWord.equals(ak.secondWord)&&al.firstTag.equals(ak.secondTag)&&al.secondTag.contains("NN")){
 								     						// Rule 3.1.2
 								     						 String y=al.depType.substring(al.depType.indexOf(":")+1);
 								     						 pw.println(ai.secondWord+ " || "+ai.firstWord+" || "+ak.firstWord+" "+xx+" "+ak.secondWord+" "+y+" "+ al.secondWord+"		-----From Rule 3.1.2 ");
 								             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" || "+ak.firstWord+" "+xx+" "+ak.secondWord+" "+y+" "+ al.secondWord+"		-----From Rule 3.1.2 ");
+								             				r3_1_2=true;
 								     					}
 								     					if(al.depType.contains("appos")&&al.firstWord.equals(ak.secondWord)&&al.firstTag.equals(ak.secondTag)&&al.secondTag.contains("NN")){
 								     						// Rule 3.1.3
 								     						 pw.println(ai.secondWord+ " || "+ai.firstWord+" "+ak.firstWord+" "+xx+" || "+ al.secondWord+"		-----From Rule 3.1.3 ");
 								             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" "+ak.firstWord+" "+xx+" || "+ al.secondWord+"		-----From Rule 3.1.3 ");
+								             				r3_1_3=true;
 								     					}
 								     				}// end for loop l
+								     				if(r3_1_1||r3_1_2||r3_1_3)r3_1=false;
+								     				if(r3_1){
+								     					 pw.println(ai.secondWord+ " || "+ai.firstWord+" || "+ak.firstWord+" "+xx+" "+ak.secondWord+ "		-----From Rule 3.1 ");
+							             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" || "+ak.firstWord+" "+xx+" "+ak.secondWord+ "		-----From Rule 3.1 ");
+								     				}
 						     					}
-						     				if(ak.depType.contains("nmod:")&&ak.firstWord.equals(ai.firstWord)&&ak.firstTag.equals(ai.firstTag)&&ak.secondTag.contains("NN")){
+						     				if(ak.depType.contains("nmod:")&&ak.firstWord.equals(ai.secondWord)&&ak.firstTag.equals(ai.secondTag)&&ak.secondTag.contains("NN")){
 						     					// Rule 3.2
 						     						String xx=ak.depType.substring(ak.depType.indexOf(":")+1);
 						     						pw.println(ai.secondWord+" "+xx+" " +ak.secondWord+" || "+ai.firstWord+" || "+aj.secondWord+ "		-----From Rule 3.2 ");
 						             				 System.out.println(ai.secondWord +" "+xx+" "+ak.secondWord+" || "+ai.firstWord+" || "+aj.secondWord+ "		-----From Rule 3.2 ");
+						             				r3_2=true;
 						     					}
 						     				if(ak.depType.contains("nmod:")&&ak.firstWord.equals(ai.secondWord)&&ak.firstTag.equals(ai.secondTag)&&ak.secondTag.contains("NN")){
 						     				   
@@ -527,6 +562,7 @@ public class InformationCompoentExtraction {
 							     						String y=al.depType.substring(al.depType.indexOf(":")+1);
 							     						pw.println(ai.secondWord+" "+xx+" " +ak.secondWord+" "+y+" "+al.secondWord+" || "+ai.firstWord+" || "+aj.secondWord+ "		-----From Rule 3.3 ");
 							     						System.out.println(ai.secondWord +" "+xx+" "+ak.secondWord+" "+y+" "+al.secondWord+" || "+ai.firstWord+" || "+aj.secondWord+ "		-----From Rule 3.3 ");
+							     						r3_3=true;
 							     						}
 							     				  	}// end for loop l
 						     					}
@@ -536,7 +572,7 @@ public class InformationCompoentExtraction {
 							     				for(int l=0;l<myobj.length;l++){
 							     					al=(ElementAccessClass) myobj[l]; 
 							     					if(al.depType.contains("nmod:")&&al.firstWord.equals(ak.secondWord)&&al.firstTag.equals(ak.secondTag)&&al.secondTag.contains("NN")){  						
-							     					  //@@@@@@@@@@@
+							     					 
 							     						String xx=al.depType.substring(al.depType.indexOf(":")+1);
 							     						ElementAccessClass am;     
 									     				for(int m=0;m<myobj.length;m++){
@@ -546,6 +582,7 @@ public class InformationCompoentExtraction {
 									     						String y=am.depType.substring(am.depType.indexOf(":")+1);
 									     						pw.println(ai.secondWord+" "+ai.firstWord+" " +aj.secondWord+" || "+ak.secondWord+" "+ xx+" || "+al.secondWord+ " " +y+" "+am.secondWord+"		-----From Rule 3.4 ");
 									     						System.out.println(ai.secondWord +" "+ai.firstWord+" "+aj.secondWord+" || "+ak.secondWord+" "+xx +" || "+al.secondWord+" "+y +" "+am.secondWord+ "		-----From Rule 3.4 ");
+									     						r3_4=true;
 									     						}
 									     					} //end for loop m
 									     					
@@ -557,9 +594,15 @@ public class InformationCompoentExtraction {
 						     					// Rule 3.5						     						
 						     						pw.println(ai.secondWord+" || "+ai.firstWord+" || "+ak.secondWord+ "		-----From Rule 3.5 ");
 						             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" || "+ak.secondWord+ "		-----From Rule 3.5 ");
+						             				r3_5=true;
 						     					}
 						     				
 						     				} // end for loop k
+						     				if(r3_2||r3_1||r3_3||r3_4||r3_5||r3_1_1||r3_1_2||r3_1_3)r3=false;
+						     				if(r3){
+						     					 pw.println(ai.secondWord+ " || "+ai.firstWord+" || "+aj.secondWord+ "		-----From Rule 3 ");
+					             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" || "+aj.secondWord+ "		-----From Rule 3 ");
+						     				}
 				     					}
 				     				} // end for loop j
 			             	  } 
@@ -567,41 +610,48 @@ public class InformationCompoentExtraction {
 			             	//******************************
 			             // Rule 4 starts here
 			             	 if(ai.depType.contains("nsubj")&&ai.firstTag.contains("VB")&&ai.secondTag.contains("NN")&&(!(ai.secondWord.equals("%")||ai.secondWord.equals("·")))){
-				            	  ElementAccessClass aj;     
+				            	  ElementAccessClass aj;    int count=0; 
 				     				for(int j=0;j<myobj.length;j++){
 				     					aj=(ElementAccessClass) myobj[j]; 
 				     					if(aj.depType.contains("nmod:")&&aj.firstWord.equals(ai.firstWord)&&aj.firstTag.equals(ai.firstTag)&&aj.secondTag.contains("NN")&&(!(aj.secondWord.equals("$")||aj.secondWord.equals("%")))){
+				     						
 				     						//Rule 4
+				     						boolean r4_1=false, r4_1_1=false, r4_1_2=false, r4_3=false, r4_2=false, r4_2_1=false, r4_2_2=false, r4_2_3=false, r4_2_3_1=false, r4_2_3_2=false, r4_4=false, r4_5=false, r4_6=false; 
 				     						String xx=aj.depType.substring(aj.depType.indexOf(":")+1); if(xx.equals("agent")) xx="by";
 				     						 
-				     						 pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 4 ");
-				             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 4 ");
+				     						
+				             				 boolean r4=true;
 				             				ElementAccessClass ak;     
 						     				for(int k=0;k<myobj.length;k++){
 						     					ak=(ElementAccessClass) myobj[k]; 
 						     					if(ak.depType.contains("nmod:")&&ak.firstWord.equals(aj.secondWord)&&ak.firstTag.equals(aj.secondTag)&&ak.secondTag.contains("NN")){
 						     						// Rule 4.1 
 						     						 String y=ak.depType.substring(ak.depType.indexOf(":")+1);
-						     						 pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" "+y+" "+ak.secondWord+ "		-----From Rule 4.1 ");
-						             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" "+y+" "+ak.secondWord+ "		-----From Rule 4.1 ");
-						             				 
+						     						 
+						             				 r4_1=true;
 						             				ElementAccessClass al;     
 								     				for(int l=0;l<myobj.length;l++){
 								     					al=(ElementAccessClass) myobj[l]; 
-								     					if(al.depType.contains("appos")&&al.firstWord.equals(ak.secondWord)&&al.firstTag.equals(ak.secondTag)&&al.secondTag.contains("NN")){
+								     					if(al.depType.contains("appos")&&al.firstWord.equals(ak.secondWord)&&al.firstTag.equals(ak.secondTag)&&al.secondTag.contains("NN")&&(!(al.secondWord.contains("%")))){
 								     						// Rule 4.1.1
 								     						 pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" "+y+" "+al.secondWord+ "		-----From Rule 4.1.1 ");
 								             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" "+y+" "+al.secondWord+ "		-----From Rule 4.1.1 ");
+								             				r4_1_1=true;
 								     					}
 								     					if(al.depType.contains("nmod:")&&al.firstWord.equals(ak.secondWord)&&al.firstTag.equals(ak.secondTag)&&al.secondTag.contains("NN")){
 								     						// Rule 4.1.2
 								     						String z=al.depType.substring(al.depType.indexOf(":")+1);
 								     						 pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" "+y+" "+al.firstWord+" "+z+" "+al.secondWord+ "		-----From Rule 4.1.2 ");
 								             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" "+y+" "+al.firstWord+" "+z+" "+al.secondWord+ "		-----From Rule 4.1.2 ");
+								             				r4_1_2=true;
 								     					}
 								     					
 								     				}// end for loop l
-						             				 
+						             				if(r4_1_1||r4_1_2)  r4_1=false;
+						             				if(r4_1){
+						             					pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" "+y+" "+ak.secondWord+ "		-----From Rule 4.1 ");
+							             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" "+y+" "+ak.secondWord+ "		-----From Rule 4.1 ");
+						             				}
 						             				 
 						     					}
 						     					
@@ -609,8 +659,8 @@ public class InformationCompoentExtraction {
 							     				if(ak.depType.contains("nmod:")&&ak.firstWord.equals(ai.secondWord)&&ak.firstTag.equals(ai.secondTag)&&ak.secondTag.contains("NN")){
 							     						// Rule 4.2 
 							     					String y=ak.depType.substring(ak.depType.indexOf(":")+1);
-							     					pw.println(ai.secondWord+" "+y+" "+ak.secondWord+ " || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 4.2 ");
-							             		    System.out.println(ai.secondWord +" "+y+" "+ak.secondWord+" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 4.2 ");
+							     					
+							             		   r4_2=true;
 							             		   ElementAccessClass al;     
 								     				for(int l=0;l<myobj.length;l++){
 								     					al=(ElementAccessClass) myobj[l]; 
@@ -619,17 +669,19 @@ public class InformationCompoentExtraction {
 								     						String z=al.depType.substring(al.depType.indexOf(":")+1);
 									     					pw.println(ai.secondWord+" "+y+" "+ak.secondWord+" "+z+" "+al.secondWord+ " || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 4.2.1 ");
 									             		    System.out.println(ai.secondWord +" "+y+" "+ak.secondWord+" "+z+" "+al.secondWord+" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 4.2.1 ");
+									             		   r4_2_1=true;
 								     					}
-								     					if(al.depType.contains("appos")&&al.firstWord.equals(aj.secondWord)&&al.firstTag.equals(aj.secondTag)&&al.secondTag.contains("NN")){
+								     					if(al.depType.contains("appos")&&al.firstWord.equals(aj.secondWord)&&al.firstTag.equals(aj.secondTag)&&al.secondTag.contains("NN")&&(!(al.secondWord.contains("%")))){
 								     						// Rule 4.2.2	     						
 									     					pw.println(ai.secondWord+" "+y+" "+ak.secondWord+" || "+ai.firstWord+" "+xx+" || "+al.secondWord+ "		-----From Rule 4.2.2 ");
 									             		    System.out.println(ai.secondWord +" "+y+" "+ak.secondWord+" || "+ai.firstWord+" "+xx+" || "+al.secondWord+ "		-----From Rule 4.2.2 ");
+									             		   r4_2_2=true;
 								     					}
 								     					if(al.depType.contains("nmod:")&&al.firstWord.equals(aj.secondWord)&&al.firstTag.equals(aj.secondTag)&&al.secondTag.contains("NN")){
 								     						// Rule 4.2.3
 								     						String z=al.depType.substring(al.depType.indexOf(":")+1);
-									     					pw.println(ai.secondWord+" "+y+" "+ak.secondWord+" || "+ai.firstWord+" "+xx+" || "+al.firstWord+" "+z+" "+al.secondWord+ "		-----From Rule 4.2.3 ");
-									             		    System.out.println(ai.secondWord +" "+y+" "+ak.secondWord+" || "+ai.firstWord+" "+xx+" || "+al.firstWord+" "+z+" "+al.secondWord+ "		-----From Rule 4.2.3 ");
+									     					
+									             		   r4_2_3=true;
 									             		   
 									             		   ElementAccessClass am;      
 										             		 for(int m=0; m<myobj.length; m++){
@@ -641,6 +693,7 @@ public class InformationCompoentExtraction {
 										             				String a=am.depType.substring(am.depType.indexOf(":")+1);
 										             				pw.println(ai.secondWord+" "+y+" "+ak.secondWord+" "+a+" "+am.secondWord+" || "+ai.firstWord+" "+xx+" || "+al.firstWord+" "+z+" "+al.secondWord+ "		-----From Rule 4.2.3.1 ");
 											             		    System.out.println(ai.secondWord +" "+y+" "+ak.secondWord+" "+a+" "+am.secondWord+" || "+ai.firstWord+" "+xx+" || "+al.firstWord+" "+z+" "+al.secondWord+ "		-----From Rule 4.2.3.1 ");
+											             		   r4_2_3_1=true;
 										             				 
 										             			   }
 										             			 if(am.depType.contains("conj:and")&&am.secondWord.equals(al.secondWord)&&am.secondTag.equals(al.secondTag)&&am.firstTag.contains("NN"))
@@ -648,22 +701,38 @@ public class InformationCompoentExtraction {
 										             				 // Rule 4.2.3.2       				
 										             				pw.println(ai.secondWord+" "+y+" "+ak.secondWord+" || "+ai.firstWord+" "+xx+" || "+al.firstWord+" "+z+" "+am.firstWord+ " and "+al.secondWord+"		-----From Rule 4.2.3.2 ");
 											             		    System.out.println(ai.secondWord +" "+y+" "+ak.secondWord+" || "+ai.firstWord+" "+xx+" || "+al.firstWord+" "+z+" "+am.firstWord+ " and "+al.secondWord+ "		-----From Rule 4.2.3.2 ");
+											             		   r4_2_3_2=true;
 										             				 
 										             			   }
 										             		 } // end for loop m
+										             		if(r4_2_3_1||r4_2_3_2)r4_2_3=false;
+										             		if(r4_2_3){
+										             			pw.println(ai.secondWord+" "+y+" "+ak.secondWord+" || "+ai.firstWord+" "+xx+" || "+al.firstWord+" "+z+" "+al.secondWord+ "		-----From Rule 4.2.3 ");
+										             		    System.out.println(ai.secondWord +" "+y+" "+ak.secondWord+" || "+ai.firstWord+" "+xx+" || "+al.firstWord+" "+z+" "+al.secondWord+ "		-----From Rule 4.2.3 ");
+										             		}
 								     					}
 								     				}// end for loop l
+								     				if(r4_2_1||r4_2_2||r4_2_3||r4_2_3_1||r4_2_3_2)r4_2=false;
+								     				if(r4_2){
+								     					pw.println(ai.secondWord+" "+y+" "+ak.secondWord+ " || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 4.2 ");
+								             		    System.out.println(ai.secondWord +" "+y+" "+ak.secondWord+" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 4.2 ");
+								     				}
 							     				}
 							     				
 							     				if(ak.depType.contains("nmod:in")&&ak.firstWord.equals(ai.firstWord)&&ak.firstTag.equals(ai.firstTag)&&ak.secondTag.contains("NN")&&(!(aj.secondWord.equals(ak.secondWord)||aj.depType.substring(aj.depType.indexOf(":")+1).equals(ak.depType.substring(ak.depType.indexOf(":")+1))))){
 						     						// Rule 4.3      					
 						     					pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+aj.secondWord+" in " +ak.secondWord+ "		-----From Rule 4.3 ");
 						             		    System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ " in " +ak.secondWord+"		-----From Rule 4.3 ");
+						             		    r4_3=true;
 							     				}
 							     				if(ak.depType.contains("conj:and")&&ak.secondWord.equals(aj.secondWord)&&ak.secondTag.equals(aj.secondTag)&&ak.firstTag.contains("NN")){
-						     						// Rule 4.4     					
+						     						// Rule 4.4  
+							     				count++;
+							     				if(count<2){
 						     					pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" and " +ak.secondWord+ "		-----From Rule 4.4 ");
-						             		    System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+ak.firstWord+ " and " +ak.secondWord+"		-----From Rule 4.4 ");
+						             		    System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+ak.firstWord+ " and " +ak.secondWord+"		-----From Rule 4.4 ");				
+						             		       r4_4=true;
+							     				}
 							     				}
 							     				if(ak.depType.contains("nmod:")&&ak.firstWord.equals(ai.secondWord)&&ak.firstTag.equals(ai.secondTag)&&ak.secondTag.contains("NN")){
 							     					String y=ak.depType.substring(ak.depType.indexOf(":")+1);
@@ -687,6 +756,7 @@ public class InformationCompoentExtraction {
 												             				         // Rule 4.5     					
 														             				  pw.println(ai.secondWord+ " "+y+" "+ak.secondWord+" || "+an.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+" "+al.secondWord+" "+z+" " +am.secondWord+ "		-----From Rule 4.5 ");
 														             				  System.out.println(ai.secondWord + " "+y+" "+ak.secondWord+" || "+an.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+" "+al.secondWord+" "+z+" " +am.secondWord+"		-----From Rule 4.5 ");
+														             				 r4_5=true;
 														             			   }
 														             		 }
 														                 }
@@ -700,17 +770,26 @@ public class InformationCompoentExtraction {
 							     					 ElementAccessClass al;     
 									     				for(int l=0;l<myobj.length;l++){
 									     					al=(ElementAccessClass) myobj[l]; 
-									     					if(al.depType.contains("nmod:")&&al.firstWord.equals(ak.secondWord)&&al.firstTag.equals(ak.secondTag)&&(al.secondIndex<aj.secondIndex)&&al.secondTag.contains("NN")){									    
+									     					if(al.depType.contains("nmod:")&&al.firstWord.equals(ak.secondWord)&&al.firstTag.equals(ak.secondTag)&&al.secondTag.contains("NN")&&(!(al.firstIndex==ai.firstIndex))){									    
 									     					// Rule 4.6
+									     					
 									     						String y=al.depType.substring(al.depType.indexOf(":")+1);
 									     						  pw.println(ai.secondWord+ " "+al.firstWord+ " "+y+" "+al.secondWord+" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 4.6 ");
 									             				  System.out.println(ai.secondWord+ " "+al.firstWord+" "+y+" "+al.secondWord+" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+"		-----From Rule 4.6 ");
+									             				  r4_6=true;
 									     						
 									     					}
 									     				}
 							     				}
 							     				
 						     				}// end for loop k
+						     				if(r4_1||r4_1_2||r4_1_1||r4_2||r4_3||r4_5||r4_6||r4_2_2) r4=false;
+						     				if(r4){
+						     					 pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 4 ");
+					             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 4 ");
+						     				}
+						     			
+						     				
 				     					}
 				     				}  // end for loop j
 			             	 }
@@ -724,18 +803,19 @@ public class InformationCompoentExtraction {
 				     					aj=(ElementAccessClass) myobj[j]; 
 				     					if(aj.depType.contains("nmod:")&&aj.firstWord.equals(ai.firstWord)&&aj.firstTag.equals(ai.firstTag)&&aj.secondTag.contains("NN")&&(!(aj.secondWord.equals("$")||aj.secondWord.equals("%")))){
 				     						//Rule 5
+				     						boolean r5=false, r5_1=false, r5_1_1=false, r5_1_2=false, r5_2=false, r5_2_1=false, r5_2_2=false, r5_3=false, r5_4=false, r5_5=false , r5_6=false, r5_7=false;
 				     						String xx=aj.depType.substring(aj.depType.indexOf(":")+1);
-				     						 pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 5 ");
-				             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 5 ");
+				     						
+				             				 r5=true;
+				             				
 				             				ElementAccessClass ak;     
 						     				for(int k=0;k<myobj.length;k++){
 						     					ak=(ElementAccessClass) myobj[k]; 
 						     					if(ak.depType.contains("nmod:")&&ak.firstWord.equals(aj.secondWord)&&ak.firstTag.equals(aj.secondTag)&&ak.secondTag.contains("NN")){
 						     						// Rule 5.1 
 						     						 String y=ak.depType.substring(ak.depType.indexOf(":")+1);
-						     						 pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" "+y+" "+ak.secondWord+ "		-----From Rule 5.1 ");
-						             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" "+y+" "+ak.secondWord+ "		-----From Rule 5.1 ");
-						             				 
+						     						 
+						             				 r5_1=true;
 						             				ElementAccessClass al;     
 								     				for(int l=0;l<myobj.length;l++){
 								     					al=(ElementAccessClass) myobj[l]; 
@@ -743,25 +823,32 @@ public class InformationCompoentExtraction {
 								     						// Rule 5.1.1
 								     						 pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" "+y+" "+al.secondWord+ "		-----From Rule 5.1.1 ");
 								             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" "+y+" "+al.secondWord+ "		-----From Rule 5.1.1 ");
+								             				r5_1_1=true;
 								     					}
 								     					if(al.depType.contains("nmod:")&&al.firstWord.equals(ak.secondWord)&&al.firstTag.equals(ak.secondTag)&&al.secondTag.contains("NN")){
 								     						// Rule 5.1.2
 								     						String z=al.depType.substring(al.depType.indexOf(":")+1);
 								     						 pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" "+y+" "+al.firstWord+" "+z+" "+al.secondWord+ "		-----From Rule 5.1.2 ");
 								             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" "+y+" "+al.firstWord+" "+z+" "+al.secondWord+ "		-----From Rule 5.1.2 ");
+								             				r5_1_2=true;
 								     					}
 								     					
 								     				}// end for loop l
 						             				 
-						             				 
+						             			  if(r5_1_1||r5_1_2)r5_1=false;
+						             			  if(r5_1){
+						             				 pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" "+y+" "+ak.secondWord+ "		-----From Rule 5.1 ");
+						             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" "+y+" "+ak.secondWord+ "		-----From Rule 5.1 "); 
+						             			  }
 						     					}
 						     					
 						     					 
 							     				if(ak.depType.contains("nmod:")&&ak.firstWord.equals(ai.secondWord)&&ak.firstTag.equals(ai.secondTag)&&ak.secondTag.contains("NN")){
 							     						// Rule 5.2 
 							     					String y=ak.depType.substring(ak.depType.indexOf(":")+1);
-							     					pw.println(ai.secondWord+" "+y+" "+ak.secondWord+ " || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 5.2 ");
-							             		    System.out.println(ai.secondWord +" "+y+" "+ak.secondWord+" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 5.2 ");
+							     					
+							     					
+							     					r5_2=true;
 							             		   ElementAccessClass al;     
 								     				for(int l=0;l<myobj.length;l++){
 								     					al=(ElementAccessClass) myobj[l]; 
@@ -770,25 +857,36 @@ public class InformationCompoentExtraction {
 								     						String z=al.depType.substring(al.depType.indexOf(":")+1);
 									     					pw.println(ai.secondWord+" "+y+" "+ak.secondWord+" "+z+" "+al.secondWord+ " || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 5.2.1 ");
 									             		    System.out.println(ai.secondWord +" "+y+" "+ak.secondWord+" "+z+" "+al.secondWord+" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 5.2.1 ");
+									             		   r5_2_1=true;
 								     					}
 								     					if(al.depType.contains("appos")&&al.firstWord.equals(aj.secondWord)&&al.firstTag.equals(aj.secondTag)&&al.secondTag.contains("NN")){
 								     						// Rule 5.2.2	     						
 									     					pw.println(ai.secondWord+" "+y+" "+ak.secondWord+" || "+ai.firstWord+" "+xx+" || "+al.secondWord+ "		-----From Rule 5.2.2 ");
 									             		    System.out.println(ai.secondWord +" "+y+" "+ak.secondWord+" || "+ai.firstWord+" "+xx+" || "+al.secondWord+ "		-----From Rule 5.2.2 ");
+									             		   r5_2_2=true;
 								     					}
-								     					if(al.depType.contains("nmod:")&&al.firstWord.equals(aj.secondWord)&&al.firstTag.equals(aj.secondTag)&&al.secondTag.contains("NN")){								     					}
+								     					
 								     				}// end for loop l
+								     				if(r5_2_1||r5_2_2)r5_2=false;
+								     				if(r5_2){
+								     					pw.println(ai.secondWord+" "+y+" "+ak.secondWord+ " || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 5.2 ");
+								             		    System.out.println(ai.secondWord +" "+y+" "+ak.secondWord+" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 5.2 ");
+								     				}
+								     				
 							     				}
 							     				
-							     				if(ak.depType.contains("nmod:in")&&ak.firstWord.equals(ai.firstWord)&&ak.firstTag.equals(ai.firstTag)&&ak.secondTag.contains("NN")){
-						     						// Rule 5.3      					
-						     					pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+aj.secondWord+" in " +ak.secondWord+ "		-----From Rule 5.3 ");
-						             		    System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ " in " +ak.secondWord+"		-----From Rule 5.3 ");
+							     				if(ak.depType.contains("nmod:in")&&ak.firstWord.equals(ai.firstWord)&&ak.firstTag.equals(ai.firstTag)&&ak.secondTag.contains("NN")&&(!(aj.secondWord.equals(ak.secondWord)))){
+						     						// Rule 5.3 
+							     				String y=ak.depType.substring(ak.depType.indexOf(":")+1);
+						     					pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+aj.secondWord+" "+ y +" " +ak.secondWord+ "		-----From Rule 5.3 ");
+						             		    System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ " "+y+" " +ak.secondWord+"		-----From Rule 5.3 ");
+						             		    r5_3=true;
 							     				}	
 							     				if(ak.depType.contains("conj:and")&&ak.secondWord.equals(aj.secondWord)&&ak.secondTag.equals(aj.secondTag)&&ak.firstTag.contains("NN")){
 						     						// Rule 5.4     					
 						     					pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+ak.firstWord+" and " +ak.secondWord+ "		-----From Rule 5.4 ");
 						             		    System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+ak.firstWord+ " and " +ak.secondWord+"		-----From Rule 5.4 ");
+						             		   r5_4=true;
 							     				}
 							     				if(ak.depType.contains("nmod:")&&ak.firstWord.equals(ai.secondWord)&&ak.firstTag.equals(ai.secondTag)&&ak.secondTag.contains("NN")){
 							     					String y=ak.depType.substring(ak.depType.indexOf(":")+1);
@@ -812,6 +910,7 @@ public class InformationCompoentExtraction {
 												             				         // Rule 5.5     					
 														             				  pw.println(ai.secondWord+ " "+y+" "+ak.secondWord+" || "+an.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+" "+al.secondWord+" "+z+" " +am.secondWord+ "		-----From Rule 5.5 ");
 														             				  System.out.println(ai.secondWord + " "+y+" "+ak.secondWord+" || "+an.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+" "+al.secondWord+" "+z+" " +am.secondWord+"		-----From Rule 5.5 ");
+														             				 r5_5=true;
 														             			   }
 														             		 }
 														                 }
@@ -820,28 +919,37 @@ public class InformationCompoentExtraction {
 									     				}// end for loop l
 									     		}
 							     				
-							     				if(ak.depType.contains("acl")&&ak.firstWord.equals(ai.secondWord)&&ak.firstTag.equals(ai.secondTag)&&ak.secondTag.contains("VB")){
+							     				if(ak.depType.contains("acl")&&ak.firstWord.equals(aj.secondWord)&&ak.firstTag.equals(aj.secondTag)&&ak.secondTag.contains("VB")){
 							     					
 							     					 ElementAccessClass al;     
 									     				for(int l=0;l<myobj.length;l++){
 									     					al=(ElementAccessClass) myobj[l]; 
+									     					
 									     					if(al.depType.contains("nmod:")&&al.firstWord.equals(ak.secondWord)&&al.firstTag.equals(ak.secondTag)&&al.secondTag.contains("NN")){									    
-									     					// Rule 5.6
-									     						String y=al.depType.substring(al.depType.indexOf(":")+1);
-									     						  pw.println(ai.secondWord+ " "+y+" "+al.secondWord+" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 5.6 ");
-									             				  System.out.println(ai.secondWord + " "+y+" "+al.secondWord+" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+"		-----From Rule 5.6 ");
+									     					// Rule 5.6			     					
+									     						 String y=al.depType.substring(al.depType.indexOf(":")+1);
+									             				  pw.println(ai.secondWord+ " || "+al.firstWord+" "+y+" || "+al.secondWord+ "		-----From Rule 5.6 ");
+									             				  System.out.println(ai.secondWord +" || "+al.firstWord+" "+y+" || "+al.secondWord+"		-----From Rule 5.6 ");
+									             				 
+									             				 r5_6=true;
 									     						
 									     					}
 									     				}
 							     				}
 							     				if(ak.depType.contains("neg")&&ak.firstWord.equals(ai.firstWord)&&ak.firstTag.equals(ai.firstTag)&&ak.secondTag.contains("RB")){
 							     					//Rule 5.7
-							     					 pw.println(ai.secondWord+" || "+ak.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 5.7 ");
+							     					  pw.println(ai.secondWord+" || "+ak.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 5.7 ");
 						             				  System.out.println(ai.secondWord +" || "+ak.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+"		-----From Rule 5.7 ");
+						             				 r5_7=true;
 							     				}	
 							     				
 							     				
 						     				}// end for loop k
+						     				if(r5_1||r5_2||r5_3||r5_4||r5_5||r5_6||r5_7) r5=false;
+						     				if(r5){
+						     					 pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 5 ");
+					             				 System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 5 ");
+						     				}
 				     					}
 				     				}  // end for loop j
 			             	 }
@@ -854,7 +962,8 @@ public class InformationCompoentExtraction {
 				     					aj=(ElementAccessClass) myobj[j]; 
 				     					if(aj.depType.contains("nmod:")&&aj.firstWord.equals(ai.firstWord)&&aj.firstTag.equals(ai.firstTag)&&aj.secondTag.contains("NN")&&(!(aj.secondWord.equals("$")||aj.secondWord.equals("%")))){
 				     						//Rule 6
-				     						String xx=aj.depType.substring(aj.depType.indexOf(":")+1);
+				     						boolean r6_1=false, r6_1_1=false, r6_1_2=false,  r6_2=false;
+				     						String xx=aj.depType.substring(aj.depType.indexOf(":")+1);				
 				     						// pw.println(ai.secondWord+ " || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 6 ");
 				             				// System.out.println(ai.secondWord +" || "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 6 ");
 				     						ElementAccessClass ak;     
@@ -863,8 +972,8 @@ public class InformationCompoentExtraction {
 						     					if(ak.depType.contains("cop")&&ak.firstWord.equals(ai.firstWord)&&ak.firstTag.equals(ai.firstTag)&&ak.secondTag.contains("VB")){
 						     						// Rule 6.1 
 						     						
-						     						 pw.println(ai.secondWord+ " || "+ak.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 6.1 ");
-						             				 System.out.println(ai.secondWord +" || "+ak.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 6.1 ");
+						     						
+						             				r6_1=true;
 						             				 ElementAccessClass al;     
 									     				for(int l=0;l<myobj.length;l++){
 									     					al=(ElementAccessClass) myobj[l]; 
@@ -872,13 +981,20 @@ public class InformationCompoentExtraction {
 									     						 String y=al.depType.substring(al.depType.indexOf(":")+1);
 									     						 pw.println(ai.secondWord+" " +y+" "+al.secondWord+" || "+ak.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 6.1.1 ");
 									             				 System.out.println(ai.secondWord +" " +y+" "+al.secondWord+" || "+ak.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 6.1.1 ");
+									             				r6_1_1=true;
 									     					}
 									     					if(al.depType.contains("nmod")&&al.firstWord.equals(aj.secondWord)&&al.firstTag.equals(aj.secondTag)&&al.secondTag.contains("NN")){	
 									     						 String y=al.depType.substring(al.depType.indexOf(":")+1);
-									     						 pw.println(ai.secondWord+" " +y+" "+al.secondWord+" || "+ak.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+ " " +y+" "+al.secondWord+"		-----From Rule 6.1.2 ");
-									             				 System.out.println(ai.secondWord +" " +y+" "+al.secondWord+" || "+ak.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+ " " +y+" "+al.secondWord+"		-----From Rule 6.1.2 ");
+									     						 pw.println(ai.secondWord+" || "+ak.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+ " " +y+" "+al.secondWord+"		-----From Rule 6.1.2 ");
+									             				 System.out.println(ai.secondWord +" || "+ak.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+ " " +y+" "+al.secondWord+"		-----From Rule 6.1.2 ");
+									             				r6_1_2=true;
 									     					}
 									     				}// end for loop l
+									     			if(r6_1_1||r6_1_2)r6_1=false;
+									     			if(r6_1){
+									     				 pw.println(ai.secondWord+ " || "+ak.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 6.1 ");
+							             				 System.out.println(ai.secondWord +" || "+ak.secondWord+" "+ai.firstWord+" "+xx+" || "+aj.secondWord+ "		-----From Rule 6.1 ");
+									     			}
 						     					}
 						     					if(ak.depType.contains("nmod:")&&ak.firstWord.equals(ai.secondWord)&&ak.firstTag.equals(ai.secondTag)&&ak.secondTag.contains("NN")){
 						     						// Rule 6.2
@@ -901,21 +1017,28 @@ public class InformationCompoentExtraction {
 		     				    	 aj=(ElementAccessClass) myobj[j];
 		     					       if(aj.depType.contains("nmod:")&&aj.firstWord.equals(ai.secondWord)&&aj.firstTag.equals(ai.secondTag)&&aj.secondTag.contains("NN")&&(!((aj.firstWord.equals("followed")&&aj.depType.substring(aj.depType.indexOf(":")+1).equals("by"))||aj.secondWord.equals(" ±")||aj.firstWord.equals(">")))){
 		     					    	  //Rule 7
+		     					    	   boolean r7=false, r7_1=false;
 		     					    	   String xx= aj.depType.substring(aj.depType.indexOf(":")+1) ;
-		     					    	  pw.println(ai.firstWord+" || "+ai.secondWord+" "+xx+" || "+aj.secondWord+"		----Rule 7");
-		     					    	  System.out.println(ai.firstWord+" || "+ai.secondWord+" "+xx+" || "+aj.secondWord+"		----Rule 7");
-		     					    	  
+		     					    	 
+		     					    	  r7=true;
 		     					    	  ElementAccessClass ak;
 				     				      for(int k=0;k<myobj.length;k++){
 				     				    	 ak=(ElementAccessClass) myobj[k];  int count=0;
-				     				    	 if(ak.depType.contains("nmod:")&&ak.firstWord.equals(aj.secondWord)&&ak.firstTag.equals(aj.secondTag)&&ak.secondTag.contains("NN")){
+				     				    	 if(ak.depType.contains("nmod:")&&ak.firstWord.equals(aj.secondWord)&&ak.firstTag.equals(aj.secondTag)&&ak.secondTag.contains("NN")&&(!(ak.secondWord.equals("%")))){
 				     				    		//Rule 7.1
 				     				    		String y= ak.depType.substring(ak.depType.indexOf(":")+1) ;
 				     					        pw.println(ai.firstWord+" || "+ai.secondWord+" "+xx+" || "+aj.secondWord+" "+y+" "+ak.secondWord+"		----Rule Tree 7.1");
 				     					       System.out.println(ai.firstWord+" || "+ai.secondWord+" "+xx+" || "+aj.secondWord+" "+y+" "+ak.secondWord+"		----Rule Tree 7.1");
+				     					       r7_1=true;
 				     				    	 }
+				     				    	
 				     				    
 		     					       } // end for loop k
+				     				  if(r7_1)r7=false;  
+				     				  if(r7){
+				     					 pw.println(ai.firstWord+" || "+ai.secondWord+" "+xx+" || "+aj.secondWord+"		----Rule 7");
+		     					    	  System.out.println(ai.firstWord+" || "+ai.secondWord+" "+xx+" || "+aj.secondWord+"		----Rule 7");
+				     				  }
 		     				      }
 			             	  }// end for loop j
 			             	 }    	 	
@@ -929,10 +1052,9 @@ public class InformationCompoentExtraction {
 		     				    	 aj=(ElementAccessClass) myobj[j];
 		     					       if(aj.depType.contains("dobj")&&aj.firstWord.equals(ai.secondWord)&&aj.firstTag.equals(ai.secondTag)&&aj.secondTag.contains("NN")&&(!((aj.firstWord.equals("followed")&&aj.depType.substring(aj.depType.indexOf(":")+1).equals("by"))||aj.secondWord.equals(" ±")||aj.firstWord.equals(">")))){
 		     					    	  //Rule 8
-		     					    	   
-		     					    	   pw.println(ai.firstWord+" || "+ai.secondWord+" || "+aj.secondWord+"		----Rule 8");
-		     					    	   System.out.println(ai.firstWord+" || "+ai.secondWord+" || "+aj.secondWord+"		----Rule 8");
-		     					    	  
+		     					    	  boolean r8=false, r8_1=false;
+		     					    	 
+		     					    	  r8=true;
 		     					    	  ElementAccessClass ak;
 				     				      for(int k=0;k<myobj.length;k++){
 				     				    	 ak=(ElementAccessClass) myobj[k];  int count=0;
@@ -941,9 +1063,16 @@ public class InformationCompoentExtraction {
 				     				    		String xx= ak.depType.substring(ak.depType.indexOf(":")+1) ;
 				     					        pw.println(ai.firstWord+" || "+ai.secondWord+" || "+aj.secondWord+" "+xx+" "+ak.secondWord+"		----Rule Tree 8.1");
 				     					       System.out.println(ai.firstWord+" || "+ai.secondWord+" || "+aj.secondWord+" "+xx+" "+ak.secondWord+"		----Rule Tree 8.1");
+				     					      r8_1=true;
 				     				    	 }
 				     				    
 		     					       } // end for loop k
+				     				  if(r8_1)r8=false;
+				     				  if(r8){
+				     					 pw.println(ai.firstWord+" || "+ai.secondWord+" || "+aj.secondWord+"		----Rule 8");
+		     					    	 System.out.println(ai.firstWord+" || "+ai.secondWord+" || "+aj.secondWord+"		----Rule 8"); 
+				     				  }
+				     				      
 		     				      }
 			             	  }// end for loop j
 			             	 }    	 	
@@ -961,21 +1090,30 @@ public class InformationCompoentExtraction {
 				     				    	 ak=(ElementAccessClass) myobj[k];
 				     					       if(ak.depType.contains("nmod:")&&ak.firstWord.equals(aj.secondWord)&&ak.firstTag.equals(aj.secondTag)&&ak.secondTag.contains("NN")){
 				     					    	  //Rule 9
+				     					    	   boolean r9=false,r9_1=false;
 				     					    	   String xx= ak.depType.substring(ak.depType.indexOf(":")+1) ;
-				     					    	   pw.println(ai.firstWord+" || "+aj.secondWord+" "+xx+" || "+ak.secondWord+"		----Rule 9");
-				     					    	  System.out.println(ai.firstWord+" || "+aj.secondWord+" "+xx+" || "+ak.secondWord+"		----Rule 9");
-				     					    	  
+				     					    	   
+				     					    	  r9=true;
 				     					    	  ElementAccessClass al;
 						     				      for(int l=0;l<myobj.length;l++){
 						     				    	 al=(ElementAccessClass) myobj[l]; 
 						     				    	 if(al.depType.contains("nmod:")&&al.firstWord.equals(ak.secondWord)&&al.firstTag.equals(ak.secondTag)&&al.secondTag.contains("NN")){
-						     				    		//Rule 7.1
+						     				    		//Rule 9.1
 						     				    		String y= al.depType.substring(al.depType.indexOf(":")+1) ;
 						     					        pw.println(ai.firstWord+" || "+aj.secondWord+" "+xx+" || "+ak.secondWord+" "+y+" "+al.secondWord+"		----Rule 9.1");
 						     					       System.out.println(ai.firstWord+" || "+aj.secondWord+" "+xx+" || "+ak.secondWord+" "+y+" "+al.secondWord+"		----Rule 9.1");
+						     					       r9_1=true;
 						     				    	 }
+						     				    	
+						     				    	 
+						     				    	 
 						     				    
 				     					       } // end for loop k
+						     				    if(r9_1)r9=false;
+					     				    	if(r9){
+					     				    		pw.println(ai.firstWord+" || "+aj.secondWord+" "+xx+" || "+ak.secondWord+"		----Rule 9");
+					     					    	System.out.println(ai.firstWord+" || "+aj.secondWord+" "+xx+" || "+ak.secondWord+"		----Rule 9"); 
+					     				    	}
 				     				      }
 					             	  }// end for loop j
 					             	 }    	 	
@@ -1002,6 +1140,7 @@ public class InformationCompoentExtraction {
 					             						 al=(ElementAccessClass) myobj[l];
 					             						 if(al.depType.contains("nmod:")&&al.firstWord.equals(ak.firstWord)&&al.firstTag.equals(ak.firstTag)&&al.secondTag.contains("NN")){
 					             							 //Rule 10
+					             							 
 					             							System.out.println(ai.secondWord+" "+ai.firstWord+" "+xx+" "+aj.secondWord+" || "+ak.firstWord+" || "+al.secondWord+"	----Rule 10");
 					             							pw.println(ai.secondWord+" "+ai.firstWord+" "+xx+" "+" "+aj.secondWord+" || "+ak.firstWord+" || "+al.secondWord+"	----Rule 10");
 					             						 }
@@ -1025,12 +1164,12 @@ public class InformationCompoentExtraction {
 					            		aj=(ElementAccessClass) myobj[j];					            		
 					            		if(aj.depType.contains("nmod:")&&aj.firstWord.equals(ai.secondWord)&&aj.firstTag.equals(ai.secondTag)&&(aj.firstIndex==ai.secondIndex)&&aj.secondTag.contains("NN")){
 					            			ElementAccessClass ak;
+					            			 String xx= aj.depType.substring(aj.depType.indexOf(":")+1) ;
 							            	for(int k=0;k<myobj.length-1;k++){
 							            		ak=(ElementAccessClass) myobj[k];
 							            		
 							            		if(ak.depType.contains("nmod:")&&ak.firstWord.equals(ai.firstWord)&&ak.firstTag.equals(ai.firstTag)&&(ak.firstIndex==ai.firstIndex)&&ak.secondTag.contains("NN")){
-							            			//System.out.println(al.secondWord+" "+aj.depType.substring(aj.depType.indexOf(":")+1)+" "+aj.secondWord+" || "+al.firstWord+" || "+ak.secondWord+"		---Rule 15b");
-							            			//pw.println(al.secondWord+" "+aj.depType.substring(aj.depType.indexOf(":")+1)+" "+aj.secondWord+" || "+al.firstWord+" || "+ak.secondWord+"		---Rule 15b");
+							            			 String y= ak.depType.substring(ak.depType.indexOf(":")+1) ;
 							            			ElementAccessClass al;
 									            	for(int l=0;l<myobj.length-1;l++){
 									            		al=(ElementAccessClass) myobj[l];	
@@ -1038,11 +1177,11 @@ public class InformationCompoentExtraction {
 									            			ElementAccessClass am;
 									            			
 											            	for(int m=0;m<myobj.length-1;m++){
-											            		am=(ElementAccessClass) myobj[m];
-											            		
+											            		am=(ElementAccessClass) myobj[m];					            		
 											            		if(am.depType.contains("nmod:")&&am.firstWord.equals(al.secondWord)&&am.firstTag.equals(al.secondTag)&&(am.firstIndex==al.secondIndex)&&am.secondTag.contains("NN")){
-											            			System.out.println(al.secondWord+" "+aj.depType.substring(aj.depType.indexOf(":")+1)+" "+aj.secondWord+" || "+am.firstWord+" "+am.depType.substring(am.depType.indexOf(":")+1)+" || "+am.secondWord+"		---Rule 11");
-											            			pw.println(ai.secondWord+" "+aj.depType.substring(aj.depType.indexOf(":")+1)+" "+aj.secondWord+" || "+am.firstWord+" "+am.depType.substring(am.depType.indexOf(":")+1)+" || "+am.secondWord+"		---Rule 11");
+											            			 String z= am.depType.substring(am.depType.indexOf(":")+1) ;
+											            			System.out.println(ai.secondWord+" "+xx+" "+aj.secondWord+" || "+am.firstWord+" "+z+" || "+am.secondWord+"		---Rule 11");
+											            			pw.println(ai.secondWord+" "+xx+" "+aj.secondWord+" || "+am.firstWord+" "+z+" || "+am.secondWord+"		---Rule 11");
 
 											            		}
 											            		}
@@ -1057,12 +1196,11 @@ public class InformationCompoentExtraction {
 					            		
 					            	}
 					            	 
-					             }// Rule 15 ends
+					             }
 			             	 
 			             	// Rule 11  ends here
 			             	//******************************
-			             	 // Rule 12 starts here
-			             	
+			             	// Rule 12 starts here
 			             	 if(ai.depType.equals("nsubj")&&ai.secondTag.contains("NN")){
 					            	ElementAccessClass aj;
 					            	for(int j=i+1;j<myobj.length;j++){
@@ -1156,7 +1294,7 @@ public class InformationCompoentExtraction {
     pw.println("-------------------------------\n");
 	br.close();  
 	pw.close();
-					//}
+					
 	
 						
 			} // List of files
@@ -1166,4 +1304,3 @@ public class InformationCompoentExtraction {
 	} // main
 	
 }// class 
-
